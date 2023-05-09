@@ -55,7 +55,7 @@ def main():
     # Diagnose
     diagnose_button = st.button('Diagnose')
     if diagnose_button:
-    diagnosis, risk_percentage = diagnose_cervical_cancer(age, num_pregnancies, num_sexual_partners, first_sexual_intercourse, num_smokes, hormonal_contraceptives)
+        diagnosis, risk_percentage = diagnose_cervical_cancer(age, num_pregnancies, num_sexual_partners, first_sexual_intercourse, num_smokes, hormonal_contraceptives)
     if diagnosis == 'Negative':
         st.success(f"Based on your answers, your risk of cervical cancer is {risk_percentage}. You are at low risk of cervical cancer.")
     else:
