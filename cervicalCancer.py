@@ -79,3 +79,6 @@ def main():
     st.write('The following helplines provide support for cervical cancer patients:')
     for helpline, number in helplines.items():
         st.write(f'- {helpline}: {number}')
+        
+if name == 'main':
+    main()
