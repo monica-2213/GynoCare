@@ -1,84 +1,48 @@
-import streamlit as st
 import pandas as pd
-import numpy as np
-import joblib
+import streamlit as st
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
 
-# Load dataset
-url = 'https://datahub.io/machine-learning/cervical-cancer/r/cervical-cancer_csv.csv'
+# Load the dataset
+url = 'https://datahub.io/machine-learning/cervical-cancer/r/cervical-cancer.csv'
 df = pd.read_csv(url)
 
-# Load trained model
-model = joblib.load('cervical_cancer_model.pkl')
+# Preprocess the dataset
+df = df.drop(['Hinselmann', 'Schiller', 'Citology'], axis=1) # remove unnecessary columns
+df = df.replace('?', pd.np.nan).dropna() # handle missing values
+df = pd.get_dummies(df, columns=['Age', 'Number of sexual partners', 'First sexual intercourse',
+                                 'Num of pregnancies', 'Smokes', 'Smokes (years)', 'Smokes (packs/year)',
+                                 'Hormonal Contraceptives', 'Hormonal Contraceptives (years)',
+                                 'IUD', 'IUD (years)', 'STDs', 'STDs (number)', 'STDs:condylomatosis',
+                                 'STDs:cervical condylomatosis', 'STDs:vaginal condylomatosis', 
+                                 'STDs:vulvo-perineal condylomatosis', 'STDs:syphilis', 'STDs:pelvic inflammatory disease',
+                                 'STDs:genital herpes', 'STDs:molluscum contagiosum', 'STDs:HIV', 'STDs:Hepatitis B',
+                                 'STDs:HPV'], prefix='', prefix_sep='') # encode categorical variables
 
-# Tests recommendation
-tests = {
-    'Pap test (Pap smear)': 'This is a routine screening test that involves collecting cells from the cervix and examining them under a microscope to look for any abnormal changes.'
-}
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(df.drop('Biopsy', axis=1), df['Biopsy'], test_size=0.2, random_state=42)
 
-# Food recommendation
-foods = {
-    'Fruits and vegetables': 'Eating a diet rich in fruits and vegetables provides essential nutrients, vitamins, and antioxidants that can help boost the immune system and protect against cancer. Dark, leafy greens, cruciferous vegetables like broccoli and cauliflower, and brightly colored fruits like berries and citrus fruits are particularly beneficial.'
-}
+# Train a Random Forest classifier on the training set
+clf = RandomForestClassifier(n_estimators=100, random_state=42)
+clf.fit(X_train, y_train)
 
-# Helplines
-helplines = {
-    'National Cancer Society Malaysia (NCSM)': '1-800-88-1000'
-}
+# Evaluate the model on the testing set
+y_pred = clf.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+st.write('Accuracy:', accuracy)
 
-def diagnose_cervical_cancer(age, num_pregnancies, smokes, horm_contra, iud, stds, first_sexual_intercourse, num_sexual_partners):
-    # Perform diagnosis based on input features using a trained model
-    # Return the diagnosis and risk percentage
-    features = np.array([[age, num_pregnancies, smokes, horm_contra, iud, stds, first_sexual_intercourse, num_sexual_partners]])
-    prediction = model.predict(features)
-    probability = model.predict_proba(features)[0][1]
-
-    if prediction == 1:
-        return f'Based on your answers, your risk of cervical cancer is {probability*100:.2f}%. We recommend that you take further tests and contact helplines for support.'
-    else:
-        return f'Based on your answers, your risk of cervical cancer is {probability*100:.2f}%. You are at low risk of cervical cancer.'
-
-def main():
-    st.title('Cervical Cancer Diagnose and Recommendations System')
-    
-    # Sidebar
-    st.sidebar.title('Patient Information')
-    age = st.sidebar.number_input('Age', min_value=18, max_value=80, value=25, step=1)
-    num_pregnancies = st.sidebar.number_input('Number of pregnancies', min_value=0, max_value=20, value=0, step=1)
-    smokes = st.sidebar.selectbox('Do you smoke?', ['Yes', 'No'])
-    horm_contra = st.sidebar.selectbox('Are you using hormonal contraceptives?', ['Yes', 'No'])
-    iud = st.sidebar.selectbox('Are you using intrauterine device (IUD)?', ['Yes', 'No'])
-    stds = st.sidebar.selectbox('Have you had any STDs?', ['Yes', 'No'])
-    first_sexual_intercourse = st.sidebar.number_input('Age of first sexual intercourse', min_value=10, max_value=40, value=15, step=1)
-    num_sexual_partners = st.sidebar.number_input('Number of sexual partners', min_value=0, max_value=50, value=1, step=1)
-    st.sidebar.markdown('---')
-
-    # Diagnose
-    diagnose_button = st.button('Diagnose')
-    if diagnose_button:
-        diagnosis, risk_percentage = diagnose_cervical_cancer(age, num_pregnancies, num_sexual_partners, first_sexual_intercourse, num_smokes, hormonal_contraceptives)
-    if diagnosis == 'Negative':
-        st.success(f"Based on your answers, your risk of cervical cancer is {risk_percentage}. You are at low risk of cervical cancer.")
-    else:
-        st.error(f"Based on your answers, your risk of cervical cancer is {risk_percentage}. We recommend that you take further tests and contact helplines for support.")
-    st.sidebar.markdown('---')
-
-    # Tests recommendation
-    st.header('Tests Recommendation')
-    st.write('The following tests are recommended for cervical cancer screening:')
-    for test, description in tests.items():
-        st.write(f'- {test}: {description}')
-
-    # Food recommendation
-    st.header('Food Recommendation')
-    st.write('The following foods can help prevent cervical cancer:')
-    for food, description in foods.items():
-        st.write(f'- {food}: {description}')
-
-    # Helplines
-    st.header('Helplines')
-    st.write('The following helplines provide support for cervical cancer patients:')
-    for helpline, number in helplines.items():
-        st.write(f'- {helpline}: {number}')
-        
-if name == 'main':
-    main()
+# Create a Streamlit web application
+st.title('Cervical Cancer Diagnosis')
+st.write('Please enter the following information to determine if you have cervical cancer or not:')
+age = st.slider('Age', 13, 84, 25)
+sexual_partners = st.slider('Number of sexual partners', 0, 28, 5)
+first_sexual_intercourse = st.slider('Age at first sexual intercourse', 10, 32, 16)
+pregnancies = st.slider('Number of pregnancies', 0, 11, 2)
+smokes = st.radio('Do you smoke?', ['Yes', 'No'])
+smokes_years = st.slider('How many years have you smoked?', 0, 37, 5)
+smokes_packs_per_year = st.slider('How many packs of cigarettes do you smoke per year?', 0, 150, 10)
+hormonal_contraceptives = st.radio('Do you use hormonal contraceptives?', ['Yes', 'No'])
+hormonal_contraceptives_years = st.slider('How many years have you used hormonal contraceptives?', 0, 35, 5)
+iud = st.radio('Do you use intrauterine device (IUD)?', ['Yes', 'No'])
+iud_years = st.slider('How many years have you used intrauterine device (IUD)?', 0, 20, 5)
