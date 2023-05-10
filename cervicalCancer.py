@@ -1,57 +1,40 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-from sklearn.preprocessing import LabelEncoder
-from sklearn.ensemble import RandomForestClassifier
+import joblib
 
-# Load the dataset
-url = "https://datahub.io/machine-learning/cervical-cancer/r/cervical-cancer.csv"
-df = pd.read_csv(url)
+# Load the machine learning model
+model = joblib.load('cervical_cancer_prediction.joblib')
 
-# Preprocess the data
-df = df.replace("?", np.nan)
-df = df.dropna()
-le = LabelEncoder()
-df['Dx:Cancer'] = le.fit_transform(df['Dx:Cancer'])
-
-# Train the model
-features = ['Age', 'Number of sexual partners', 'First sexual intercourse', 'Num of pregnancies', 'Smokes', 'Smokes (years)', 'Smokes (packs/year)', 'Hormonal Contraceptives', 'Hormonal Contraceptives (years)', 'IUD', 'IUD (years)', 'STDs', 'STDs (number)', 'STDs:condylomatosis', 'STDs:cervical condylomatosis', 'STDs:vaginal condylomatosis', 'STDs:vulvo-perineal condylomatosis', 'STDs:syphilis', 'STDs:pelvic inflammatory disease', 'STDs:genital herpes', 'STDs:molluscum contagiosum', 'STDs:AIDS', 'STDs:HIV', 'STDs:Hepatitis B', 'STDs:HPV', 'STDs: Number of diagnosis', 'Dx:Cancer', 'Dx:CIN', 'Dx:HPV', 'Dx']
-
-X = df[features]
-y = df['Dx:Cancer']
-
-model = RandomForestClassifier()
-model.fit(X, y)
-
-# Create the Streamlit app
+# Create the web app
 st.title('Cervical Cancer Expert System')
+st.write('This expert system predicts the likelihood of cervical cancer based on personal information and medical history.')
 
-# Collect input from the user
-age = st.slider('What is your age?', 15, 84)
-sexual_partners = st.slider('How many sexual partners have you had?', 0, 30)
-first_sexual_intercourse = st.slider('At what age did you have your first sexual intercourse?', 10, 40)
-pregnancies = st.slider('How many times have you been pregnant?', 0, 10)
-smoking = st.radio('Do you smoke?', ('Yes', 'No'))
+# Ask for the user's personal information
+age = st.number_input('Age:', min_value=0, max_value=120, value=25, step=1)
+sexual_partners = st.slider('Number of sexual partners:', 0, 50, 1)
+first_sexual_intercourse = st.number_input('Age at first sexual intercourse:', min_value=0, max_value=120, value=18, step=1)
+pregnancies = st.slider('Number of pregnancies:', 0, 20, 1)
+smoking = st.selectbox('Do you smoke?', ['Yes', 'No'])
 if smoking == 'Yes':
-    smoking_years = st.slider('For how many years have you smoked?', 0, 50)
-    smoking_packs = st.slider('How many packs of cigarettes per year do you smoke?', 0, 5)
+    smoking_years = st.slider('Number of years smoked:', 0, 60, 10)
+    smoking_packs = st.slider('Number of packs smoked per year:', 0, 60, 10)
 else:
     smoking_years = 0
     smoking_packs = 0
-contraceptives = st.radio('Have you used hormonal contraceptives?', ('Yes', 'No'))
+contraceptives = st.selectbox('Do you use hormonal contraceptives?', ['Yes', 'No'])
 if contraceptives == 'Yes':
-    contraceptive_years = st.slider('For how many years have you used hormonal contraceptives?', 0, 50)
+    contraceptive_years = st.slider('Number of years using hormonal contraceptives:', 0, 50, 10)
 else:
     contraceptive_years = 0
-iud = st.radio('Have you used an IUD?', ('Yes', 'No'))
+iud = st.selectbox('Do you use an intrauterine device (IUD)?', ['Yes', 'No'])
 if iud == 'Yes':
-    iud_years = st.slider('For how many years have you used an IUD?', 0, 50)
+    iud_years = st.slider('Number of years using an IUD:', 0, 50, 10)
 else:
     iud_years = 0
-stds = st.radio('Have you ever had a sexually transmitted disease?', ('Yes', 'No'))
+stds = st.selectbox('Have you had any sexually transmitted diseases?', ['Yes', 'No'])
 if stds == 'Yes':
     stds_num = st.slider('How many sexually transmitted diseases have you had?', 0, 5)
-    stds_cond = st.checkbox('Condylomatosis')
+    stds_cond = st.checkbox('Other sexually transmitted disease')
     stds_cervical_cond = st.checkbox('Cervical Condylomatosis')
     stds_vaginal_cond = st.checkbox('Vaginal Condylomatosis')
     stds_vulvo_cond = st.checkbox('Vulvo-perineal Condylomatosis')
@@ -80,40 +63,44 @@ else:
     stds_hpv = False
     stds_diagnosis = 0
 
-# Make predictions with the model
-data = {
-    'Age': age,
-    'Number of sexual partners': sexual_partners,
-    'First sexual intercourse': first_sexual_intercourse,
-    'Num of pregnancies': pregnancies,
-    'Smokes': smoking == 'Yes',
-    'Smokes (years)': smoking_years,
-    'Smokes (packs/year)': smoking_packs,
-    'Hormonal Contraceptives': contraceptives == 'Yes',
-    'Hormonal Contraceptives (years)': contraceptive_years,
-    'IUD': iud == 'Yes',
-    'IUD (years)': iud_years,
-    'STDs': stds == 'Yes',
-    'STDs (number)': stds_num,
-    'STDs:condylomatosis': stds_cond,
-    'STDs:cervical condylomatosis': stds_cervical_cond,
-    'STDs:vaginal condylomatosis': stds_vaginal_cond,
-    'STDs:vulvo-perineal condylomatosis': stds_vulvo_cond,
-    'STDs:syphilis': stds_syphilis,
-    'STDs:pelvic inflammatory disease': stds_pid,
-    'STDs:genital herpes': stds_herpes,
-    'STDs:molluscum contagiosum': stds_molluscum,
-    'STDs:AIDS': stds_aids,
-    'STDs:HIV': stds_hiv,
-    'STDs:Hepatitis B': stds_hepatitis,
-    'STDs:HPV': stds_hpv,
-    'STDs: Number of diagnosis': stds_diagnosis
-}
-X_new = pd.DataFrame(data, index=[0])
-y_pred = model.predict(X_new)
+# Make the prediction
+predict_button = st.button('Predict')
+if predict_button:
+    # Convert the inputs to a DataFrame
+    input_data = pd.DataFrame({
+        'Age': [age],
+        'Number of sexual partners': [sexual_partners],
+        'Age at first sexual intercourse': [first_sexual_intercourse],
+        'Number of pregnancies': [pregnancies],
+        'Smokes': [smoking],
+        'Smokes (years)': [smoking_years],
+        'Smokes (packs/year)': [smoking_packs],
+        'Hormonal Contraceptives': [contraceptives],
+        'Hormonal Contraceptives (years)': [contraceptive_years],
+        'IUD': [iud],
+        'IUD (years)': [iud_years],
+        'STDs': [stds],
+        'STDs (number)': [stds_num],
+        'STDs:condylomatosis': [stds_cond],
+        'STDs:cervical condylomatosis': [stds_cervical_cond],
+        'STDs:vaginal condylomatosis': [stds_vaginal_cond],
+        'STDs:vulvo-perineal condylomatosis': [stds_vulvo_cond],
+        'STDs:syphilis': [stds_syphilis],
+        'STDs:pelvic inflammatory disease': [stds_pid],
+        'STDs:genital herpes': [stds_herpes],
+        'STDs:molluscum contagiosum': [stds_molluscum],
+        'STDs:AIDS': [stds_aids],
+        'STDs:HIV': [stds_hiv],
+        'STDs:Hepatitis B': [stds_hepatitis],
+        'STDs:HPV': [stds_hpv],
+        'STDs: Number of diagnosis': [stds_diagnosis]
+    })
 
-# Display the prediction to the user
-if y_pred[0] == 0:
-  st.write('Based on the information you provided, it is unlikely that you have cervical cancer.')
-else:
-  st.write('You are fine')
+    # Make the prediction
+    prediction = model.predict(input_data)
+
+    # Display the prediction
+    if prediction[0] == 0:
+        st.write('Based on the input data, you are likely **not** to have cervical cancer.')
+    else:
+        st.write('Based on the input data, you are likely to have cervical cancer. Please consult a medical professional for further evaluation.')
