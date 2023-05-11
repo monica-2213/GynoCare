@@ -50,15 +50,18 @@ def app():
     stds_aids = st.selectbox("Presence of AIDS", ["No", "Yes"])
     stds_hiv = st.selectbox("Presence of HIV", ["No", "Yes"])
     
-    # Diagnose cervical cancer based on user input
-    diagnosis = diagnose_cervical_cancer(age, number_of_sexual_partners, first_sexual_intercourse, num_pregnancies, 
-                                         stds_num, stds_condylomatosis, stds_cervical_condylomatosis, 
-                                         stds_vaginal_condylomatosis, stds_vulvo_perineal_condylomatosis, 
-                                         stds_syphilis, stds_pelvic_inflammatory_disease, stds_genital_herpes, 
-                                         stds_molluscum_contagiosum, stds_aids, stds_hiv)
-    
-    # Display the diagnosis to the user
-    st.write("Based on your input, you are at:", diagnosis, "risk for cervical cancer.")
+    # Add a submit button
+    if st.button("Diagnose"):
+        # Diagnose cervical cancer based on user input
+        diagnosis = diagnose_cervical_cancer(age, number_of_sexual_partners, first_sexual_intercourse, num_pregnancies, 
+                                             stds_num, stds_condylomatosis, stds_cervical_condylomatosis, 
+                                             stds_vaginal_condylomatosis, stds_vulvo_perineal_condylomatosis, 
+                                             stds_syphilis, stds_pelvic_inflammatory_disease, stds_genital_herpes, 
+                                             stds_molluscum_contagiosum, stds_aids, stds_hiv)
+        
+        # Display the diagnosis to the user
+        st.write("Based on your input, you are at:", diagnosis, "risk for cervical cancer.")
+
     
 if __name__ == '__main__':
     app()
