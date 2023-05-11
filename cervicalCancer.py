@@ -76,7 +76,7 @@ def app():
     # When the user clicks the submit button
     if submit_button:
         # Run the diagnosis function and pass in the user inputs
-        diagnosis = diagnose(user_inputs)
+        diagnosis = diagnose_cervical_cancer(user_inputs)
 
         # Display the diagnosis
         st.write(f"Based on the information you have provided, your diagnosis is: {diagnosis}")
