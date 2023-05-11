@@ -39,29 +39,47 @@ def app():
     first_sexual_intercourse = st.slider("Age at first sexual intercourse", 10, 32)
     num_pregnancies = st.slider("Number of pregnancies", 0, 11)
     stds_num = st.slider("Number of sexually transmitted diseases (STDs)", 0, 7)
-    stds_condylomatosis = st.selectbox("Presence of genital warts (condylomatosis)", ["No", "Yes"])
-    stds_cervical_condylomatosis = st.selectbox("Presence of cervical warts (condylomatosis)", ["No", "Yes"])
-    stds_vaginal_condylomatosis = st.selectbox("Presence of vaginal warts (condylomatosis)", ["No", "Yes"])
-    stds_vulvo_perineal_condylomatosis = st.selectbox("Presence of vulvo-perineal warts (condylomatosis)", ["No", "Yes"])
-    stds_syphilis = st.selectbox("Presence of syphilis", ["No", "Yes"])
-    stds_pelvic_inflammatory_disease = st.selectbox("Presence of pelvic inflammatory disease", ["No", "Yes"])
-    stds_genital_herpes = st.selectbox("Presence of genital herpes", ["No", "Yes"])
-    stds_molluscum_contagiosum = st.selectbox("Presence of molluscum contagiosum", ["No", "Yes"])
-    stds_aids = st.selectbox("Presence of AIDS", ["No", "Yes"])
-    stds_hiv = st.selectbox("Presence of HIV", ["No", "Yes"])
     
-    # Add a submit button
-    if st.button("Diagnose"):
-        # Diagnose cervical cancer based on user input
-        diagnosis = diagnose_cervical_cancer(age, number_of_sexual_partners, first_sexual_intercourse, num_pregnancies, 
-                                             stds_num, stds_condylomatosis, stds_cervical_condylomatosis, 
-                                             stds_vaginal_condylomatosis, stds_vulvo_perineal_condylomatosis, 
-                                             stds_syphilis, stds_pelvic_inflammatory_disease, stds_genital_herpes, 
-                                             stds_molluscum_contagiosum, stds_aids, stds_hiv)
-        
-        # Display the diagnosis to the user
-        st.write("Based on your input, you are at:", diagnosis, "risk for cervical cancer.")
+    st.write("Do you have any of the following STDs?")
+    
+    stds_condylomatosis = st.selectbox("Genital warts (condylomatosis)", ["No", "Yes"])
+    if stds_condylomatosis == "Yes":
+        stds_cervical_condylomatosis = st.selectbox("Cervical warts (condylomatosis)", ["No", "Yes"])
+        stds_vaginal_condylomatosis = st.selectbox("Vaginal warts (condylomatosis)", ["No", "Yes"])
+        stds_vaginalis = st.selectbox("Vaginalis", ["No", "Yes"])
+    if stds_vaginalis == "Yes":
+        stds_vaginal_cervicitis = st.selectbox("Vaginal cervicitis", ["No", "Yes"])
+        stds_vulvodynia = st.selectbox("Vulvodynia", ["No", "Yes"])
 
-    
+    stds_pelvic = st.selectbox("Pelvic inflammatory disease (PID)", ["No", "Yes"])
+    stds_genital_herpes = st.selectbox("Genital herpes", ["No", "Yes"])
+
+    submit_button = st.button('Submit')
+
+    # Create a dictionary of the user inputs
+    user_inputs = {
+        "Age": age,
+        "Number of sexual partners": number_of_sexual_partners,
+        "Age at first sexual intercourse": first_sexual_intercourse,
+        "Number of pregnancies": num_pregnancies,
+        "Number of sexually transmitted diseases (STDs)": stds_num,
+        "Genital warts (condylomatosis)": stds_condylomatosis,
+        "Cervical warts (condylomatosis)": stds_cervical_condylomatosis if stds_condylomatosis == "Yes" else None,
+        "Vaginal warts (condylomatosis)": stds_vaginal_condylomatosis if stds_condylomatosis == "Yes" else None,
+        "Vaginalis": stds_vaginalis,
+        "Vaginal cervicitis": stds_vaginal_cervicitis if stds_vaginalis == "Yes" else None,
+        "Vulvodynia": stds_vulvodynia if stds_vaginalis == "Yes" else None,
+        "Pelvic inflammatory disease (PID)": stds_pelvic,
+        "Genital herpes": stds_genital_herpes
+    }
+
+    # When the user clicks the submit button
+    if submit_button:
+        # Run the diagnosis function and pass in the user inputs
+        diagnosis = diagnose(user_inputs)
+
+        # Display the diagnosis
+        st.write(f"Based on the information you have provided, your diagnosis is: {diagnosis}")
+
 if __name__ == '__main__':
     app()
