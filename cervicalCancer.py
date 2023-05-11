@@ -59,3 +59,6 @@ def app():
     
     # Display the diagnosis to the user
     st.write("Based on your input, you are at:", diagnosis, "risk for cervical cancer.")
+    
+if __name__ == '__main__':
+    app()
