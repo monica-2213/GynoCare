@@ -57,13 +57,13 @@ def main():
     diagnosis = cervical_cancer_diagnosis(symptoms)
 
     # Display the diagnosis result
-        st.subheader('Diagnosis Result')
-        if diagnosis == 'Positive':
-            st.write('Based on your symptoms, the diagnosis suggests **positive** for cervical cancer. Please consult a healthcare professional for further evaluation.')
-        elif diagnosis == 'Negative':
-            st.write('Based on your symptoms, the diagnosis suggests **negative** for cervical cancer. However, it is always advisable to consult a healthcare professional for confirmation.')
-        else:
-            st.write('The diagnosis result is **unknown**. Please consult a healthcare professional for proper evaluation.')
+    st.subheader('Diagnosis Result')
+    if diagnosis == 'Positive':
+        st.write('Based on your symptoms, the diagnosis suggests **positive** for cervical cancer. Please consult a healthcare professional for further evaluation.')
+    elif diagnosis == 'Negative':
+        st.write('Based on your symptoms, the diagnosis suggests **negative** for cervical cancer. However, it is always advisable to consult a healthcare professional for confirmation.')
+    else:
+        st.write('The diagnosis result is **unknown**. Please consult a healthcare professional for proper evaluation.')
 
 if __name__ == '__main__':
     main()
