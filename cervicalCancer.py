@@ -78,13 +78,45 @@ def main():
 
     # Display the questionnaire and capture user input
     for key, question in questions.items():
-        if key == 'Age' or key == 'Number of sexual partners' or key == 'Num of pregnancies':
-            answer = st.number_input(question, min_value=0, step=1)
+        if key == 'Number of sexual partners':
+            sexual_partners = st.radio(question, ('None/0', '1', '2', '3', '4', '5+'))
+            if sexual_partners != 'None/0':
+                symptoms[key] = sexual_partners
+                st.write('---')
+                first_sexual_intercourse = st.number_input('At what age did you have your first sexual intercourse?', min_value=0, step=1)
+                symptoms['First sexual intercourse'] = str(first_sexual_intercourse)
+        elif key == 'Smoking':
+            smoking = st.radio(question, ('No', 'Yes'))
+            if smoking == 'Yes':
+                symptoms[key] = '1'
+                st.write('---')
+                smoking_years = st.number_input('For how many years have you been smoking?', min_value=0, step=1)
+                symptoms['Smokes (years)'] = str(smoking_years)
+        elif key == 'Hormonal Contraceptives':
+            contraceptives = st.radio(question, ('No', 'Yes'))
+            if contraceptives == 'Yes':
+                symptoms[key] = '1'
+                st.write('---')
+                contraceptive_years = st.number_input('For how many years have you used hormonal contraceptives?', min_value=0, step=1)
+                symptoms['Hormonal Contraceptives (years)'] = str(contraceptive_years)
+        elif key == 'STDs':
+            stds = st.radio(question, ('No', 'Yes'))
+            if stds == 'Yes':
+                symptoms[key] = '1'
+                st.write('---')
+                num_stds = st.number_input('How many STDs have you had?', min_value=0, step=1)
+                symptoms['STDs (number)'] = str(num_stds)
+                st.write('---')
+                num_diagnosis = st.number_input('How many times have you been diagnosed with an STD?', min_value=0, step=1)
+                symptoms['STDs: Number of diagnosis'] = str(num_diagnosis)
+                st.write('---')
+                time_since_diagnosis = st.number_input('How long has it been since your first STD diagnosis?', min_value=0, step=1)
+                symptoms['STDs: Time since first diagnosis'] = str(time_since_diagnosis)
         else:
             options = ('No', 'Yes')
             answer = st.selectbox(question, options)
-        symptoms[key] = str(answer)
-        st.write('---')
+            symptoms[key] = '1' if answer == 'Yes' else '0'
+            st.write('---')
 
     # Perform the diagnosis
     diagnosis = cervical_cancer_diagnosis(symptoms)
