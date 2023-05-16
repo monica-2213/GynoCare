@@ -116,7 +116,7 @@ if st.button("Assess Risk"):
 
     st.subheader("Recommendations")
     for recommendation in recommendations:
-    st.write("- " + recommendation)
+        st.write("- " + recommendation)
 
     if name == "main":
         st.set_page_config(page_title="GynoCare", page_icon=":female-doctor:")
