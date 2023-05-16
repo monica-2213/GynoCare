@@ -76,7 +76,11 @@ def main():
 
     # Display the questionnaire and capture user input
     for key, question in questions.items():
-        if key == 'Number of sexual partners':
+        if key == 'Age':
+            age = st.number_input(question, min_value=0, step=1)
+            symptoms[key] = age
+            st.write('---')
+        elif key == 'Number of sexual partners':
             sexual_partners = st.selectbox(question, ('None/0', '1', '2', '3', '4', '5+'))
             if sexual_partners != 'None/0':
                 symptoms[key] = int(sexual_partners)
