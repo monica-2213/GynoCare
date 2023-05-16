@@ -1,56 +1,105 @@
-import pandas as pd
 import streamlit as st
+import pandas as pd
 
 # Load the dataset
-data_url = 'https://datahub.io/machine-learning/cervical-cancer/r/cervical-cancer.csv'
-df = pd.read_csv(data_url)
+df = pd.read_csv('https://datahub.io/machine-learning/cervical-cancer/r/cervical-cancer.csv')
 
-# Define the symptoms and their corresponding scores
-symptom_scores = {
-    'Hinselmann': 10,
-    'Schiller': 8,
-    'Citology': 6,
-    'Age': 4,
-    'Number of sexual partners': 3,
-    'First sexual intercourse': 2,
-    # Add more symptoms and scores as needed based on the dataset
+# Define the rules for cervical cancer diagnosis
+rules = {
+    'Rule 1': {
+        'conditions': [
+            ('Hinselmann', '==', 1),
+            ('Schiller', '==', 1),
+            ('Citology', '==', 1)
+        ],
+        'diagnosis': 'High risk of cervical cancer'
+    },
+    'Rule 2': {
+        'conditions': [
+            ('Hinselmann', '==', 0),
+            ('Schiller', '==', 1),
+            ('Citology', '==', 1)
+        ],
+        'diagnosis': 'Moderate risk of cervical cancer'
+    },
+    'Rule 3': {
+        'conditions': [
+            ('Hinselmann', '==', 1),
+            ('Schiller', '==', 0),
+            ('Citology', '==', 1)
+        ],
+        'diagnosis': 'Moderate risk of cervical cancer'
+    },
+    'Rule 4': {
+        'conditions': [
+            ('Hinselmann', '==', 0),
+            ('Schiller', '==', 0),
+            ('Citology', '==', 1)
+        ],
+        'diagnosis': 'Low risk of cervical cancer'
+    },
+    'Rule 5': {
+        'conditions': [
+            ('Hinselmann', '==', 1),
+            ('Schiller', '==', 1),
+            ('Citology', '==', 0)
+        ],
+        'diagnosis': 'Moderate risk of cervical cancer'
+    },
+    'Rule 6': {
+        'conditions': [
+            ('Hinselmann', '==', 0),
+            ('Schiller', '==', 1),
+            ('Citology', '==', 0)
+        ],
+        'diagnosis': 'Low risk of cervical cancer'
+    },
+    'Rule 7': {
+        'conditions': [
+            ('Hinselmann', '==', 1),
+            ('Schiller', '==', 0),
+            ('Citology', '==', 0)
+        ],
+        'diagnosis': 'Low risk of cervical cancer'
+    },
+    'Rule 8': {
+        'conditions': [
+            ('Hinselmann', '==', 0),
+            ('Schiller', '==', 0),
+            ('Citology', '==', 0)
+        ],
+        'diagnosis': 'No risk of cervical cancer'
+    },
 }
 
-def calculate_score(selected_symptoms):
-    score = 0
-    for symptom in selected_symptoms:
-        if symptom in symptom_scores:
-            score += symptom_scores[symptom]
-    return score
+# Streamlit app
+def main():
+    st.title('Cervical Cancer Expert System')
+    st.write('This expert system predicts the risk of cervical cancer based on certain conditions.')
 
-# Streamlit UI
-st.title('GynoCare: Cervical Cancer Diagnosis and Treatment Recommendations')
-st.subheader('Assess Your Risk')
+    # Display the dataset
+    st.subheader('Cervical Cancer Dataset')
+    st.write(df)
 
-# Display symptoms checkboxes
-selected_symptoms = st.multiselect('Select Symptoms:', list(symptom_scores.keys()))
+    # Get input from the user
+    st.subheader('Diagnosis')
+    hinselmann = st.selectbox('Hinselmann Test Result', [0, 1])
+    schiller = st.selectbox('Schiller Test Result', [0, 1])
+    citology = st.selectbox('Citology Test Result', [0, 1])
 
-# Calculate and display the symptom score
-score = calculate_score(selected_symptoms)
-st.subheader(f'Symptom Score: {score}')
+    # Check the diagnosis based on the rules
+    diagnosis = check_diagnosis(hinselmann, schiller, citology)
 
-# Perform risk assessment and provide recommendations
-if score > 10:
-    st.error('High Risk Detected. We recommend consulting a healthcare professional.')
-elif score > 5:
-    st.warning('Moderate Risk Detected. We recommend further medical tests and screenings.')
-else:
-    st.success('Low Risk Detected. We recommend regular check-ups and healthy lifestyle practices.')
+    # Display the diagnosis
+    st.subheader('Expert System Diagnosis')
+    st.write(diagnosis)
+    
+def check_diagnosis(hinselmann, schiller, citology):
+    for rule_name, rule in rules.items():
+        conditions = rule['conditions']
+    if all(eval(f'{condition[0]} {condition[1]} {condition[2]}') for condition in conditions):
+        return rule['diagnosis']
+    return 'No diagnosis available'
 
-# Display additional information and recommendations
-st.subheader('Additional Information')
-st.write('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.')
-
-st.subheader('Recommendations')
-st.write('- Schedule a Pap test and HPV testing')
-st.write('- Follow up with a healthcare professional for a thorough examination')
-st.write('- Adopt healthy lifestyle habits such as regular exercise and a balanced diet')
-st.write('- Practice safe sex and use protection')
-
-# Disclaimer
-st.write('Disclaimer: This expert system provides preliminary risk assessment and recommendations. It is not a substitute for professional medical advice. Please consult with a healthcare professional for accurate diagnosis and personalized treatment.')
+if name == 'main':
+    main()
