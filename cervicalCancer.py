@@ -42,6 +42,32 @@ def cervical_cancer_diagnosis(symptoms):
     return 'Unknown'  # Return 'Unknown' if no matching rule is found
 
 
+# Define the interrelated questions for the questionnaire
+questions = {
+    'Age': 'What is your age?',
+    'Number of sexual partners': 'How many sexual partners have you had?',
+    'First sexual intercourse': 'At what age did you have your first sexual intercourse?',
+    'Num of pregnancies': 'How many pregnancies have you had?',
+    'Smokes': 'Do you smoke?',
+    'Smokes (years)': 'For how many years have you been smoking?',
+    'Hormonal Contraceptives': 'Have you used hormonal contraceptives?',
+    'Hormonal Contraceptives (years)': 'For how many years have you used hormonal contraceptives?',
+    'IUD': 'Have you used an intrauterine device (IUD)?',
+    'STDs': 'Have you had any sexually transmitted diseases (STDs)?',
+    'STDs (number)': 'How many STDs have you had?',
+    'STDs:condylomatosis': 'Have you had condylomatosis (genital warts)?',
+    'STDs:cervical condylomatosis': 'Have you had cervical condylomatosis?',
+    'STDs: Number of diagnosis': 'How many times have you been diagnosed with an STD?',
+    'STDs: Time since first diagnosis': 'How long has it been since your first STD diagnosis?',
+    'Dx:Cancer': 'Have you been diagnosed with cervical cancer?',
+    'Dx:CIN': 'Have you been diagnosed with cervical intraepithelial neoplasia (CIN)?',
+    'Dx': 'Have you been diagnosed with any other disease?',
+    'Hinselmann': 'Have you been diagnosed with Hinselmann?',
+    'Citology': 'Have you had a cytology test?',
+    'Biopsy': 'Have you had a biopsy?',
+}
+
+
 # Main Streamlit code
 def main():
     st.title('Cervical Cancer Diagnosis')
