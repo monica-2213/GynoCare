@@ -1,8 +1,11 @@
 import streamlit as st
 
-# Step 1: Gather user input
-st.header("GynoCare - Cervical Cancer Diagnosis and Treatment Recommendations")
-st.subheader("Risk Assessment")
+if __name__ == "__main__":
+    st.set_page_config(page_title="GynoCare", page_icon=":female-doctor:")
+    
+    # Step 1: Gather user input
+    st.header("GynoCare - Cervical Cancer Diagnosis and Treatment Recommendations")
+    st.subheader("Risk Assessment")
 
 # Create input fields for symptoms, medical history, lifestyle factors, and family history
 symptoms = st.multiselect("Select Symptoms:", [
@@ -13,7 +16,8 @@ symptoms = st.multiselect("Select Symptoms:", [
     "Fatigue or loss of energy",
     "Changes in bowel or urinary habits",
     "Back or leg pain",
-    "Swelling of the legs"
+    "Swelling of the legs",
+    "None"
 ])
 
 medical_history = st.multiselect("Medical History Factors:", [
@@ -22,19 +26,22 @@ medical_history = st.multiselect("Medical History Factors:", [
     "Previous treatment for cervical cancer or precancerous cervical lesions",
     "Previous exposure to diethylstilbestrol (DES) in utero",
     "Weakened immune system",
-    "Long-term use of oral contraceptives"
+    "Long-term use of oral contraceptives",
+    "None"
 ])
 
 lifestyle_factors = st.multiselect("Lifestyle Factors:", [
     "Human papillomavirus (HPV) infection",
     "Smoking tobacco",
     "Multiple sexual partners or early sexual activity",
-    "Lack of regular cervical cancer screening"
+    "Lack of regular cervical cancer screening",
+    "None"
 ])
 
 family_history = st.multiselect("Family History Factors:", [
     "Family history of cervical cancer",
-    "Family history of certain hereditary conditions, such as Lynch syndrome or Fanconi anemia"
+    "Family history of certain hereditary conditions, such as Lynch syndrome or Fanconi anemia",
+    "None"
 ])
 
 # Step 2: Perform risk assessment and generate recommendations
@@ -83,12 +90,16 @@ if st.button("Assess Risk"):
         risk_score += 1
     if "Lack of regular cervical cancer screening" in lifestyle_factors:
         risk_score += 1
+    if "None" in lifestyle_factors:
+        risk_score -= 1
         
     # Family history factors
     if "Family history of cervical cancer" in family_history:
         risk_score += 1
     if "Family history of certain hereditary conditions, such as Lynch syndrome or Fanconi anemia" in family_history:
         risk_score += 1
+    if "None" in family_history:
+        risk_score -= 1
 
     # Generate recommendations based on risk score
     recommendations = []
@@ -99,18 +110,18 @@ if st.button("Assess Risk"):
     else:
         recommendations.append("Based on your risk assessment, it is recommended to continue practicing regular cervical cancer screenings as recommended by your healthcare provider.")
 
-# Display the results
-st.subheader("Risk Assessment Results")
-st.write("Risk Score:", risk_score)
+    #Display the results
+    st.subheader("Risk Assessment Results")
+    st.write("Risk Score:", risk_score)
 
-st.subheader("Recommendations")
-for recommendation in recommendations:
+    st.subheader("Recommendations")
+    for recommendation in recommendations:
     st.write("- " + recommendation)
-    
-if __name__ == "__main__":
-    st.set_page_config(page_title="GynoCare", page_icon=":female-doctor:")
-    st.sidebar.title("GynoCare")
-    st.sidebar.write("Welcome to GynoCare")
-    st.sidebar.write("Please provide the requested information and click 'Assess Risk' to get personalized recommendations.")
-    st.sidebar.write("For further assistance, please contact your healthcare provider.")
-    st.sidebar.write("© 2023 GynoCare")
+
+    if name == "main":
+        st.set_page_config(page_title="GynoCare", page_icon=":female-doctor:")
+        st.sidebar.title("GynoCare")
+        st.sidebar.write("Welcome to GynoCare")
+        st.sidebar.write("Please provide the requested information and click 'Assess Risk' to get personalized recommendations.")
+        st.sidebar.write("For further assistance, please contact your healthcare provider.")
+        st.sidebar.write("© 2023 GynoCare")
