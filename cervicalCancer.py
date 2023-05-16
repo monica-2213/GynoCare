@@ -65,44 +65,43 @@ questions = {
     'Hinselmann': 'Have you been diagnosed with Hinselmann?',
     'Citology': 'Have you had a cytology test?',
     'Biopsy': 'Have you had a biopsy?',
-}
+    }
 
-
-# Main Streamlit code
+#Main Streamlit code
 def main():
     st.title('Cervical Cancer Diagnosis')
     st.write('Answer a few questions to get your diagnosis.')
-
+    
     # Initialize the dictionary to store user input
     symptoms = {}
 
     # Display the questionnaire and capture user input
     for key, question in questions.items():
         if key == 'Number of sexual partners':
-            sexual_partners = st.radio(question, ('None/0', '1', '2', '3', '4', '5+'))
+            sexual_partners = st.selectbox(question, ('None/0', '1', '2', '3', '4', '5+'))
             if sexual_partners != 'None/0':
                 symptoms[key] = sexual_partners
                 st.write('---')
                 first_sexual_intercourse = st.number_input('At what age did you have your first sexual intercourse?', min_value=0, step=1)
                 symptoms['First sexual intercourse'] = str(first_sexual_intercourse)
-        elif key == 'Smoking':
+        elif key == 'Smokes':
             smoking = st.radio(question, ('No', 'Yes'))
             if smoking == 'Yes':
-                symptoms[key] = '1'
+                symptoms[key] = 'Yes'
                 st.write('---')
                 smoking_years = st.number_input('For how many years have you been smoking?', min_value=0, step=1)
                 symptoms['Smokes (years)'] = str(smoking_years)
         elif key == 'Hormonal Contraceptives':
             contraceptives = st.radio(question, ('No', 'Yes'))
             if contraceptives == 'Yes':
-                symptoms[key] = '1'
+                symptoms[key] = 'Yes'
                 st.write('---')
                 contraceptive_years = st.number_input('For how many years have you used hormonal contraceptives?', min_value=0, step=1)
                 symptoms['Hormonal Contraceptives (years)'] = str(contraceptive_years)
         elif key == 'STDs':
             stds = st.radio(question, ('No', 'Yes'))
             if stds == 'Yes':
-                symptoms[key] = '1'
+                symptoms[key] = 'Yes'
                 st.write('---')
                 num_stds = st.number_input('How many STDs have you had?', min_value=0, step=1)
                 symptoms['STDs (number)'] = str(num_stds)
@@ -115,7 +114,7 @@ def main():
         else:
             options = ('No', 'Yes')
             answer = st.selectbox(question, options)
-            symptoms[key] = '1' if answer == 'Yes' else '0'
+            symptoms[key] = 'Yes' if answer == 'Yes' else 'No'
             st.write('---')
 
     # Perform the diagnosis
@@ -134,5 +133,5 @@ def main():
     else:
         st.write('The diagnosis result is **unknown**. Please consult a healthcare professional for proper evaluation.')
 
-if __name__ == '__main__':
+if name == 'main':
     main()
