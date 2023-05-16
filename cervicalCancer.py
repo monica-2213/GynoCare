@@ -101,5 +101,5 @@ def check_diagnosis(hinselmann, schiller, citology):
         return rule['diagnosis']
     return 'No diagnosis available'
 
-if name == 'main':
+if __name__ == __'main'__:
     main()
