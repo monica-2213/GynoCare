@@ -7,7 +7,9 @@ if __name__ == "__main__":
     st.header("GynoCare - Cervical Cancer Diagnosis and Treatment Recommendations")
     st.subheader("Risk Assessment")
 
-# Create input fields for symptoms, medical history, lifestyle factors, and family history
+# Create input fields for age, symptoms, medical history, lifestyle factors, and family history
+age = st.number_input("Age:", min_value=0, max_value=120, value=30)
+
 symptoms = st.multiselect("Select Symptoms:", [
     "Abnormal vaginal bleeding or discharge",
     "Pelvic pain or discomfort",
@@ -49,6 +51,10 @@ if st.button("Assess Risk"):
     # Perform inference using the acquired expert knowledge and user inputs
     risk_score = 0
 
+    # Age
+    if age < 17:
+        risk_score += 1
+
     # Symptoms
     if "Abnormal vaginal bleeding or discharge" in symptoms:
         risk_score += 1
@@ -80,7 +86,7 @@ if st.button("Assess Risk"):
         risk_score += 1
     if "Long-term use of oral contraceptives" in medical_history:
         risk_score += 1
-
+        
     # Lifestyle factors
     if "Human papillomavirus (HPV) infection" in lifestyle_factors:
         risk_score += 1
@@ -92,7 +98,7 @@ if st.button("Assess Risk"):
         risk_score += 1
     if "None" in lifestyle_factors:
         risk_score -= 1
-        
+    
     # Family history factors
     if "Family history of cervical cancer" in family_history:
         risk_score += 1
@@ -100,6 +106,12 @@ if st.button("Assess Risk"):
         risk_score += 1
     if "None" in family_history:
         risk_score -= 1
+
+    # Additional risk factors
+    if age < 17 and "Multiple sexual partners or early sexual activity" in lifestyle_factors:
+        risk_score += 1
+    if age >= 17 and "7 Pregnancies or more" in lifestyle_factors:
+        risk_score += 1
 
     # Generate recommendations based on risk score
     recommendations = []
@@ -109,16 +121,16 @@ if st.button("Assess Risk"):
         recommendations.append("Based on your risk assessment, it is recommended to schedule a Pap test and HPV test with your healthcare provider.")
     else:
         recommendations.append("Based on your risk assessment, it is recommended to continue practicing regular cervical cancer screenings as recommended by your healthcare provider.")
-
+        
     #Display the results
     st.subheader("Risk Assessment Results")
     st.write("Risk Score:", risk_score)
 
     st.subheader("Recommendations")
     for recommendation in recommendations:
-        st.write("- " + recommendation)
+    st.write("- " + recommendation)
 
-    if name == "main":
+    if __name__ == "__main__":
         st.set_page_config(page_title="GynoCare", page_icon=":female-doctor:")
         st.sidebar.title("GynoCare")
         st.sidebar.write("Welcome to GynoCare")
