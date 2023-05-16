@@ -107,7 +107,7 @@ st.subheader("Recommendations")
 for recommendation in recommendations:
     st.write("- " + recommendation)
     
-if name == "main":
+if __name__ == "__main__":
     st.set_page_config(page_title="GynoCare", page_icon=":female-doctor:")
     st.sidebar.title("GynoCare")
     st.sidebar.write("Welcome to GynoCare")
