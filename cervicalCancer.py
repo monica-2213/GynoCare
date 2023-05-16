@@ -38,7 +38,7 @@ def cervical_cancer_diagnosis(symptoms):
                 break
         if match:
             return conditions['Diagnosis']
-    
+
     return 'Unknown'  # Return 'Unknown' if no matching rule is found
 
 
@@ -50,7 +50,7 @@ questions = {
     'Num of pregnancies': 'How many pregnancies have you had?',
     'Smokes': 'Do you smoke?',
     'Smokes (years)': 'For how many years have you been smoking?',
-    'Hormonal Contraceptives': 'Have you used hormonal contraceptives?',
+    'Hormonal Contraceptives': 'Have you used hormonalcontraceptives?',
     'Hormonal Contraceptives (years)': 'For how many years have you used hormonal contraceptives?',
     'IUD': 'Have you used an intrauterine device (IUD)?',
     'STDs': 'Have you had any sexually transmitted diseases (STDs)?',
@@ -67,11 +67,10 @@ questions = {
     'Biopsy': 'Have you had a biopsy?',
     }
 
-#Main Streamlit code
+#Main function
 def main():
     st.title('Cervical Cancer Diagnosis')
     st.write('Answer a few questions to get your diagnosis.')
-    
     # Initialize the dictionary to store user input
     symptoms = {}
 
@@ -80,37 +79,37 @@ def main():
         if key == 'Number of sexual partners':
             sexual_partners = st.selectbox(question, ('None/0', '1', '2', '3', '4', '5+'))
             if sexual_partners != 'None/0':
-                symptoms[key] = sexual_partners
+                symptoms[key] = int(sexual_partners)
                 st.write('---')
                 first_sexual_intercourse = st.number_input('At what age did you have your first sexual intercourse?', min_value=0, step=1)
-                symptoms['First sexual intercourse'] = str(first_sexual_intercourse)
+                symptoms['First sexual intercourse'] = first_sexual_intercourse
         elif key == 'Smokes':
             smoking = st.radio(question, ('No', 'Yes'))
             if smoking == 'Yes':
                 symptoms[key] = 'Yes'
                 st.write('---')
                 smoking_years = st.number_input('For how many years have you been smoking?', min_value=0, step=1)
-                symptoms['Smokes (years)'] = str(smoking_years)
+                symptoms['Smokes (years)'] = smoking_years
         elif key == 'Hormonal Contraceptives':
             contraceptives = st.radio(question, ('No', 'Yes'))
             if contraceptives == 'Yes':
                 symptoms[key] = 'Yes'
                 st.write('---')
                 contraceptive_years = st.number_input('For how many years have you used hormonal contraceptives?', min_value=0, step=1)
-                symptoms['Hormonal Contraceptives (years)'] = str(contraceptive_years)
+                symptoms['Hormonal Contraceptives (years)'] = contraceptive_years
         elif key == 'STDs':
             stds = st.radio(question, ('No', 'Yes'))
             if stds == 'Yes':
                 symptoms[key] = 'Yes'
                 st.write('---')
                 num_stds = st.number_input('How many STDs have you had?', min_value=0, step=1)
-                symptoms['STDs (number)'] = str(num_stds)
+                symptoms['STDs (number)'] = num_stds
                 st.write('---')
                 num_diagnosis = st.number_input('How many times have you been diagnosed with an STD?', min_value=0, step=1)
-                symptoms['STDs: Number of diagnosis'] = str(num_diagnosis)
+                symptoms['STDs: Number of diagnosis'] = num_diagnosis
                 st.write('---')
                 time_since_diagnosis = st.number_input('How long has it been since your first STD diagnosis?', min_value=0, step=1)
-                symptoms['STDs: Time since first diagnosis'] = str(time_since_diagnosis)
+                symptoms['STDs: Time since first diagnosis'] = time_since_diagnosis
         else:
             options = ('No', 'Yes')
             answer = st.selectbox(question, options)
