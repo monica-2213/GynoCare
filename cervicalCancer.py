@@ -78,8 +78,18 @@ def main():
 
     # Display the questionnaire and capture user input
     for key, question in questions.items():
-        answer = st.radio(question, ('Yes', 'No'))
-        symptoms[key] = '1' if answer == 'Yes' else '0'
+        if key == 'Age':
+            answer = st.number_input(question, min_value=0, max_value=120, step=1)
+        elif key in ['Bleeding', 'Smoking', 'Hormonal Contraceptives']:
+            options = ('No', 'Yes')
+            answer = st.selectbox(question, options)
+        else:
+            options = ('None', 'One', 'Two', 'Three or more')
+            answer = st.selectbox(question, options)
+        if key == 'Age':
+            symptoms[key] = str(answer)
+        else:
+            symptoms[key] = str(options.index(answer))
         st.write('---')
 
     # Perform the diagnosis
