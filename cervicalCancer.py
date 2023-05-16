@@ -133,5 +133,5 @@ def main():
     else:
         st.write('The diagnosis result is **unknown**. Please consult a healthcare professional for proper evaluation.')
 
-if name == 'main':
+if __name__ == '__main__':
     main()
