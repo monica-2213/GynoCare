@@ -1,11 +1,8 @@
 import streamlit as st
 
-if __name__ == "__main__":
-    st.set_page_config(page_title="GynoCare", page_icon=":female-doctor:")
-    
-    # Step 1: Gather user input
-    st.header("GynoCare - Cervical Cancer Diagnosis and Treatment Recommendations")
-    st.subheader("Risk Assessment")
+# Step 1: Gather user input
+st.header("GynoCare - Cervical Cancer Diagnosis and Treatment Recommendations")
+st.subheader("Risk Assessment")
 
 # Create input fields for age, symptoms, medical history, lifestyle factors, and family history
 age = st.number_input("Age:", min_value=0, max_value=120, value=30)
