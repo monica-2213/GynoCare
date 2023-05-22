@@ -16,7 +16,8 @@ def evaluate_rules(symptoms, history, age, lifestyle):
     if history.get("Previous abnormal Pap test") == "Yes":
         recommendations.append("Recommend more frequent Pap tests or colposcopy examinations.")
     
-    if history.get("HPV infection duration") >= 12:
+    hpv_duration = history.get("HPV infection duration")
+    if hpv_duration is not None and hpv_duration >= 12:
         recommendations.append("Recommend colposcopy and consider treatment options such as cryotherapy, LEEP, or cone biopsy.")
     
     if history.get("Diagnosis") == "Cervical cancer":
@@ -47,6 +48,7 @@ def evaluate_rules(symptoms, history, age, lifestyle):
         recommendations.append("Recommend regular Pap tests or HPV testing and provide information on safe sex practices and the prevention of sexually transmitted infections.")
     
     return recommendations
+
 
 # Function to get risk level based on recommendations
 def get_risk_level(recommendations):
