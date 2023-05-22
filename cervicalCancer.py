@@ -1,136 +1,89 @@
 import streamlit as st
 
-# Step 1: Gather user input
-st.header("GynoCare - Cervical Cancer Diagnosis and Treatment Recommendations")
-st.subheader("Risk Assessment")
-
-# Create input fields for age, symptoms, medical history, lifestyle factors, and family history
-age = st.number_input("Age:", min_value=0, max_value=120, value=30)
-
-symptoms = st.multiselect("Select Symptoms:", [
-    "Abnormal vaginal bleeding or discharge",
-    "Pelvic pain or discomfort",
-    "Pain during sexual intercourse",
-    "Unexplained weight loss",
-    "Fatigue or loss of energy",
-    "Changes in bowel or urinary habits",
-    "Back or leg pain",
-    "Swelling of the legs",
-    "None"
-])
-
-medical_history = st.multiselect("Medical History Factors:", [
-    "Previous abnormal Pap test results",
-    "Previous history of cervical dysplasia or cervical intraepithelial neoplasia (CIN)",
-    "Previous treatment for cervical cancer or precancerous cervical lesions",
-    "Previous exposure to diethylstilbestrol (DES) in utero",
-    "Weakened immune system",
-    "Long-term use of oral contraceptives",
-    "None"
-])
-
-lifestyle_factors = st.multiselect("Lifestyle Factors:", [
-    "Human papillomavirus (HPV) infection",
-    "Smoking tobacco",
-    "Multiple sexual partners or early sexual activity",
-    "Lack of regular cervical cancer screening",
-    "None"
-])
-
-family_history = st.multiselect("Family History Factors:", [
-    "Family history of cervical cancer",
-    "Family history of certain hereditary conditions, such as Lynch syndrome or Fanconi anemia",
-    "None"
-])
-
-# Step 2: Perform risk assessment and generate recommendations
-if st.button("Assess Risk"):
-    # Perform inference using the acquired expert knowledge and user inputs
-    risk_score = 0
-
-    # Age
-    if age < 17:
-        risk_score += 1
-
-    # Symptoms
-    if "Abnormal vaginal bleeding or discharge" in symptoms:
-        risk_score += 1
-    if "Pelvic pain or discomfort" in symptoms:
-        risk_score += 1
-    if "Pain during sexual intercourse" in symptoms:
-        risk_score += 1
-    if "Unexplained weight loss" in symptoms:
-        risk_score += 1
-    if "Fatigue or loss of energy" in symptoms:
-        risk_score += 1
-    if "Changes in bowel or urinary habits" in symptoms:
-        risk_score += 1
-    if "Back or leg pain" in symptoms:
-        risk_score += 1
-    if "Swelling of the legs" in symptoms:
-        risk_score += 1
-
-    # Medical history factors
-    if "Previous abnormal Pap test results" in medical_history:
-        risk_score += 1
-    if "Previous history of cervical dysplasia or cervical intraepithelial neoplasia (CIN)" in medical_history:
-        risk_score += 1
-    if "Previous treatment for cervical cancer or precancerous cervical lesions" in medical_history:
-        risk_score += 1
-    if "Previous exposure to diethylstilbestrol (DES) in utero" in medical_history:
-        risk_score += 1
-    if "Weakened immune system" in medical_history:
-        risk_score += 1
-    if "Long-term use of oral contraceptives" in medical_history:
-        risk_score += 1
-        
-    # Lifestyle factors
-    if "Human papillomavirus (HPV) infection" in lifestyle_factors:
-        risk_score += 1
-    if "Smoking tobacco" in lifestyle_factors:
-        risk_score += 1
-    if "Multiple sexual partners or early sexual activity" in lifestyle_factors:
-        risk_score += 1
-    if "Lack of regular cervical cancer screening" in lifestyle_factors:
-        risk_score += 1
-    if "None" in lifestyle_factors:
-        risk_score -= 1
-    
-    # Family history factors
-    if "Family history of cervical cancer" in family_history:
-        risk_score += 1
-    if "Family history of certain hereditary conditions, such as Lynch syndrome or Fanconi anemia" in family_history:
-        risk_score += 1
-    if "None" in family_history:
-        risk_score -= 1
-
-    # Additional risk factors
-    if age < 17 and "Multiple sexual partners or early sexual activity" in lifestyle_factors:
-        risk_score += 1
-    if age >= 17 and "7 Pregnancies or more" in lifestyle_factors:
-        risk_score += 1
-
-    # Generate recommendations based on risk score
+# Function to evaluate rules and provide recommendations
+def evaluate_rules(symptoms, history, age, lifestyle):
     recommendations = []
-    if risk_score >= 6:
-        recommendations.append("Based on your risk assessment, it is recommended to consult with your healthcare provider for further evaluation and screening.")
-    elif risk_score >= 3:
-        recommendations.append("Based on your risk assessment, it is recommended to schedule a Pap test and HPV test with your healthcare provider.")
+    
+    if "Positive HPV test" in symptoms:
+        recommendations.append("Recommend colposcopy and biopsy for further evaluation.")
+    
+    if "Abnormal Pap test" in symptoms:
+        recommendations.append("Recommend colposcopy and biopsy for further evaluation.")
+    
+    if history.get("Family history of cervical cancer") == "Yes":
+        recommendations.append("Recommend more frequent Pap tests or HPV testing.")
+    
+    if history.get("Previous abnormal Pap test") == "Yes":
+        recommendations.append("Recommend more frequent Pap tests or colposcopy examinations.")
+    
+    if history.get("HPV infection duration") >= 12:
+        recommendations.append("Recommend colposcopy and consider treatment options such as cryotherapy, LEEP, or cone biopsy.")
+    
+    if history.get("Diagnosis") == "Cervical cancer":
+        recommendations.append("Recommend surgery, radiation therapy, chemotherapy, or a combination of treatments based on the stage and specific characteristics of the cancer.")
+    
+    if lifestyle.get("Smoking status") == "Smoker":
+        recommendations.append("Provide information and resources for smoking cessation programs.")
+    
+    if lifestyle.get("Sexually active") == "Yes":
+        recommendations.append("Provide information on safe sex practices and discuss the benefits of the HPV vaccine.")
+    
+    if age >= 21:
+        recommendations.append("Recommend regular Pap tests or HPV testing based on age and guidelines.")
+    
+    if history.get("Weakened immune system") == "Yes":
+        recommendations.append("Recommend more frequent Pap tests or colposcopy examinations and consider treatment options based on the individual's condition.")
+    
+    if history.get("History of CIN") == "Yes":
+        recommendations.append("Recommend regular Pap tests or colposcopy examinations to monitor for recurrence or progression.")
+    
+    if symptoms.count("Abnormal vaginal bleeding") > 0 or symptoms.count("Pelvic pain") > 0 or symptoms.count("Discomfort during sex") > 0:
+        recommendations.append("Recommend immediate medical evaluation to assess the cause of the symptoms.")
+    
+    if history.get("Hysterectomy") == "Yes":
+        recommendations.append("Evaluate the reason for the hysterectomy and recommend screening based on the presence or absence of residual cervical tissue.")
+    
+    if lifestyle.get("Multiple sexual partners") == "Yes" or lifestyle.get("High-risk sexual behaviors") == "Yes":
+        recommendations.append("Recommend regular Pap tests or HPV testing and provide information on safe sex practices and the prevention of sexually transmitted infections.")
+    
+    return recommendations
+
+
+# Streamlit app
+def main():
+    st.title("GynoCare - Cervical Cancer Expert System")
+    
+    # User input
+    st.header("Patient Information")
+    symptoms = st.multiselect("Select symptoms:", ["Positive HPV test", "Abnormal Pap test", "Abnormal vaginal bleeding", "Pelvic pain", "Discomfort during sex"])
+    history = {
+        "Family history of cervical cancer": st.radio("Family history of cervical cancer:", ("Yes", "No")),
+        "Previous abnormal Pap test": st.radio("Previous abnormal Pap test:", ("Yes", "No")),
+        "HPV infection duration": st.number_input("HPV infection duration (months):", min_value=0),
+        "Diagnosis": st.radio("Diagnosis:", ("Cervical cancer", "No diagnosis")),
+        "Weakened immune system": st.radio("Weakened immune system:", ("Yes", "No")),
+        "History of CIN": st.radio("History of CIN:", ("Yes", "No")),
+        "Hysterectomy": st.radio("Hysterectomy:", ("Yes", "No"))
+    }
+    age = st.slider("Age:", min_value=18, max_value=100)
+    lifestyle = {
+        "Smoking status": st.radio("Smoking status:", ("Smoker", "Non-smoker")),
+        "Sexually active": st.radio("Sexually active:", ("Yes", "No")),
+        "Multiple sexual partners": st.radio("Multiple sexual partners:", ("Yes", "No")),
+        "High-risk sexual behaviors": st.radio("High-risk sexual behaviors:", ("Yes", "No"))
+    }
+    
+    # Evaluate rules and provide recommendations
+    recommendations = evaluate_rules(symptoms, history, age, lifestyle)
+    
+    # Display recommendations
+    st.header("Recommendations")
+    if recommendations:
+        for idx, recommendation in enumerate(recommendations):
+            st.write(f"{idx+1}. {recommendation}")
     else:
-        recommendations.append("Based on your risk assessment, it is recommended to continue practicing regular cervical cancer screenings as recommended by your healthcare provider.")
-        
-    #Display the results
-    st.subheader("Risk Assessment Results")
-    st.write("Risk Score:", risk_score)
-
-    st.subheader("Recommendations")
-    for recommendation in recommendations:
-        st.write("- " + recommendation)
-
-    if __name__ == "__main__":
-        st.set_page_config(page_title="GynoCare", page_icon=":female-doctor:")
-        st.sidebar.title("GynoCare")
-        st.sidebar.write("Welcome to GynoCare")
-        st.sidebar.write("Please provide the requested information and click 'Assess Risk' to get personalized recommendations.")
-        st.sidebar.write("For further assistance, please contact your healthcare provider.")
-        st.sidebar.write("© 2023 GynoCare")
+        st.write("No recommendations at this time.")
+    
+    
+if __name__ == "__main__":
+    main()
