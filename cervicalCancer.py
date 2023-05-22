@@ -4,20 +4,7 @@ import streamlit as st
 RULES = {
     "Positive HPV test": "Recommend colposcopy and biopsy for further evaluation.",
     "Abnormal Pap test": "Recommend colposcopy and biopsy for further evaluation.",
-    "Family history of cervical cancer": "Recommend more frequent Pap tests or HPV testing.",
-    "Previous abnormal Pap test": "Recommend more frequent Pap tests or colposcopy examinations.",
-    "HPV infection duration": "Recommend colposcopy and consider treatment options such as cryotherapy, LEEP, or cone biopsy.",
-    "Diagnosis": "Recommend surgery, radiation therapy, chemotherapy, or a combination of treatments based on the stage and specific characteristics of the cancer.",
-    "Smoking status": "Provide information and resources for smoking cessation programs.",
-    "Sexually active": "Provide information on safe sex practices and discuss the benefits of the HPV vaccine.",
-    "Weakened immune system": "Recommend more frequent Pap tests or colposcopy examinations and consider treatment options based on the individual's condition.",
-    "History of CIN": "Recommend regular Pap tests or colposcopy examinations to monitor for recurrence or progression.",
-    "Abnormal vaginal bleeding": "Recommend immediate medical evaluation to assess the cause of the symptoms.",
-    "Pelvic pain": "Recommend immediate medical evaluation to assess the cause of the symptoms.",
-    "Discomfort during sex": "Recommend immediate medical evaluation to assess the cause of the symptoms.",
-    "Hysterectomy": "Evaluate the reason for the hysterectomy and recommend screening based on the presence or absence of residual cervical tissue.",
-    "Multiple sexual partners": "Recommend regular Pap tests or HPV testing and provide information on safe sex practices and the prevention of sexually transmitted infections.",
-    "High-risk sexual behaviors": "Recommend regular Pap tests or HPV testing and provide information on safe sex practices and the prevention of sexually transmitted infections."
+    # Add more rules and recommendations as needed
 }
 
 # Function to evaluate rules and provide recommendations
@@ -59,13 +46,27 @@ def main():
     # User input
     st.header("Patient Information")
     age = st.slider("Age:", min_value=18, max_value=100)
-    symptoms = st.multiselect("Select symptoms:", list(RULES.keys()))
+    
+    # Symptoms
+    st.header("Symptoms")
+    symptoms = []
+    for symptom in RULES.keys():
+        symptom_option = st.checkbox(symptom)
+        if symptom_option:
+            symptoms.append(symptom)
+    
+    # History
+    st.header("History")
     history = {}
-    lifestyle = {}
     for key in RULES.keys():
         if key.startswith("Family history") or key.startswith("Previous abnormal") or key == "HPV infection duration":
             history[key] = st.radio(key, ("Yes", "No"))
-        else:
+    
+    # Lifestyle
+    st.header("Lifestyle")
+    lifestyle = {}
+    for key in RULES.keys():
+        if key not in history:
             lifestyle[key] = st.radio(key, ("Yes", "No"))
     
     # Diagnose button
