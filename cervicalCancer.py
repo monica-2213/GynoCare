@@ -48,6 +48,14 @@ def evaluate_rules(symptoms, history, age, lifestyle):
     
     return recommendations
 
+# Function to get risk level based on recommendations
+def get_risk_level(recommendations):
+    if len(recommendations) >= 3:
+        return "High"
+    elif len(recommendations) >= 1:
+        return "Moderate"
+    else:
+        return "Low"
 
 # Streamlit app
 def main():
@@ -73,16 +81,26 @@ def main():
         "High-risk sexual behaviors": st.radio("High-risk sexual behaviors:", ("Yes", "No"))
     }
     
-    # Evaluate rules and provide recommendations
-    recommendations = evaluate_rules(symptoms, history, age, lifestyle)
-    
-    # Display recommendations
-    st.header("Recommendations")
-    if recommendations:
-        for idx, recommendation in enumerate(recommendations):
-            st.write(f"{idx+1}. {recommendation}")
-    else:
-        st.write("No recommendations at this time.")
+    # Diagnose button
+    if st.button("Diagnose"):
+        # Evaluate rules and get recommendations
+        recommendations = evaluate_rules(symptoms, history, age, lifestyle)
+        
+        # Determine risk level
+        risk_level = get_risk_level(recommendations)
+        
+        # Display recommendations with risk level colors
+        st.header("Recommendations")
+        if recommendations:
+            for idx, recommendation in enumerate(recommendations):
+                if risk_level == "High":
+                    st.markdown(f"<span style='color:red;'>{idx+1}. {recommendation}</span>", unsafe_allow_html=True)
+                elif risk_level == "Moderate":
+                    st.markdown(f"<span style='color:orange;'>{idx+1}. {recommendation}</span>", unsafe_allow_html=True)
+                else:
+                    st.markdown(f"<span style='color:green;'>{idx+1}. {recommendation}</span>", unsafe_allow_html=True)
+        else:
+            st.write("No recommendations at this time.")
     
     
 if __name__ == "__main__":
