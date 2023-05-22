@@ -57,23 +57,32 @@ def get_risk_level(recommendations):
     else:
         return "Low"
 
+# Function to calculate risk percentage
+def calculate_risk_percentage(risk_level):
+    if risk_level == "High":
+        return 80
+    elif risk_level == "Moderate":
+        return 50
+    else:
+        return 20
+
 # Streamlit app
 def main():
     st.title("GynoCare - Cervical Cancer Expert System")
     
     # User input
     st.header("Patient Information")
+    age = st.slider("Age:", min_value=18, max_value=100)
     symptoms = st.multiselect("Select symptoms:", ["Positive HPV test", "Abnormal Pap test", "Abnormal vaginal bleeding", "Pelvic pain", "Discomfort during sex"])
     history = {
         "Family history of cervical cancer": st.radio("Family history of cervical cancer:", ("Yes", "No")),
         "Previous abnormal Pap test": st.radio("Previous abnormal Pap test:", ("Yes", "No")),
-        "HPV infection duration": st.number_input("HPV infection duration (months):", min_value=0),
+        "HPV infection duration (months)": st.number_input("HPV infection duration:", min_value=0),
         "Diagnosis": st.radio("Diagnosis:", ("Cervical cancer", "No diagnosis")),
         "Weakened immune system": st.radio("Weakened immune system:", ("Yes", "No")),
         "History of CIN": st.radio("History of CIN:", ("Yes", "No")),
         "Hysterectomy": st.radio("Hysterectomy:", ("Yes", "No"))
     }
-    age = st.slider("Age:", min_value=18, max_value=100)
     lifestyle = {
         "Smoking status": st.radio("Smoking status:", ("Smoker", "Non-smoker")),
         "Sexually active": st.radio("Sexually active:", ("Yes", "No")),
@@ -88,6 +97,19 @@ def main():
         
         # Determine risk level
         risk_level = get_risk_level(recommendations)
+        
+        # Calculate risk percentage
+        risk_percentage = calculate_risk_percentage(risk_level)
+        
+        # Display risk level and percentage
+        st.header("Cervical Cancer Diagnosis Result")
+        if risk_level == "High":
+            st.markdown("<span style='color:red;'>High Risk</span>", unsafe_allow_html=True)
+        elif risk_level == "Moderate":
+            st.markdown("<span style='color:orange;'>Moderate Risk</span>", unsafe_allow_html=True)
+        else:
+            st.markdown("<span style='color:green;'>Low Risk</span>", unsafe_allow_html=True)
+        st.write(f"Risk Percentage: {risk_percentage}%")
         
         # Display recommendations with risk level colors
         st.header("Recommendations")
