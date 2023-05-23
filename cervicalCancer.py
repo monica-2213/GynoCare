@@ -1,130 +1,104 @@
 import streamlit as st
 
-# Function to evaluate rules and provide recommendations
-def evaluate_rules(symptoms, history, age, lifestyle):
-    recommendations = []
-    
-    if "Positive HPV test" in symptoms:
-        recommendations.append("Recommend colposcopy and biopsy for further evaluation.")
-    
-    if "Abnormal Pap test" in symptoms:
-        recommendations.append("Recommend colposcopy and biopsy for further evaluation.")
-    
-    if history.get("Family history of cervical cancer") == "Yes":
-        recommendations.append("Recommend more frequent Pap tests or HPV testing.")
-    
-    if history.get("Previous abnormal Pap test") == "Yes":
-        recommendations.append("Recommend more frequent Pap tests or colposcopy examinations.")
-    
-    hpv_duration = history.get("HPV infection duration")
-    if hpv_duration is not None and hpv_duration >= 12:
-        recommendations.append("Recommend colposcopy and consider treatment options such as cryotherapy, LEEP, or cone biopsy.")
-    
-    if history.get("Diagnosis") == "Cervical cancer":
-        recommendations.append("Recommend surgery, radiation therapy, chemotherapy, or a combination of treatments based on the stage and specific characteristics of the cancer.")
-    
-    if lifestyle.get("Smoking status") == "Smoker":
-        recommendations.append("Provide information and resources for smoking cessation programs.")
-    
-    if lifestyle.get("Sexually active") == "Yes":
-        recommendations.append("Provide information on safe sex practices and discuss the benefits of the HPV vaccine.")
-    
-    if age >= 21:
-        recommendations.append("Recommend regular Pap tests or HPV testing based on age and guidelines.")
-    
-    if history.get("Weakened immune system") == "Yes":
-        recommendations.append("Recommend more frequent Pap tests or colposcopy examinations and consider treatment options based on the individual's condition.")
-    
-    if history.get("History of CIN") == "Yes":
-        recommendations.append("Recommend regular Pap tests or colposcopy examinations to monitor for recurrence or progression.")
-    
-    if symptoms.count("Abnormal vaginal bleeding") > 0 or symptoms.count("Pelvic pain") > 0 or symptoms.count("Discomfort during sex") > 0:
-        recommendations.append("Recommend immediate medical evaluation to assess the cause of the symptoms.")
-    
-    if history.get("Hysterectomy") == "Yes":
-        recommendations.append("Evaluate the reason for the hysterectomy and recommend screening based on the presence or absence of residual cervical tissue.")
-    
-    if lifestyle.get("Multiple sexual partners") == "Yes" or lifestyle.get("High-risk sexual behaviors") == "Yes":
-        recommendations.append("Recommend regular Pap tests or HPV testing and provide information on safe sex practices and the prevention of sexually transmitted infections.")
-    
-    return recommendations
+# Page title
+st.title("GynoCare: Cervical Cancer Diagnosis and Recommendations")
 
-# Function to get risk level based on recommendations
-def get_risk_level(recommendations):
-    if len(recommendations) >= 3:
-        return "High"
-    elif len(recommendations) >= 1:
-        return "Moderate"
+# Introduction and explanation
+st.write("Welcome to GynoCare, an expert system for cervical cancer diagnosis and treatment recommendations. Please answer the following questions to assess your risk and receive personalized recommendations.")
+
+# Questions and user input
+age = st.slider("How old are you?", min_value=18, max_value=100, step=1)
+hpv_positive = st.radio("Have you ever tested positive for high-risk types of HPV?", ("Yes", "No"))
+smoking_history = st.radio("Do you have a history of smoking or are you currently a smoker?", ("Yes", "No"))
+immune_conditions = st.radio("Have you been diagnosed with any conditions or are you undergoing treatments that weaken your immune system?", ("Yes", "No"))
+family_history = st.radio("Does anyone in your immediate family have a history of cervical cancer?", ("Yes", "No"))
+abnormal_pap = st.radio("Have you ever had abnormal Pap test results in the past?", ("Yes", "No"))
+sexual_behavior = st.radio("Have you engaged in high-risk sexual behavior?", ("Yes", "No"))
+cin_diagnosis = st.radio("Have you ever been diagnosed with cervical intraepithelial neoplasia (CIN) or cervical dysplasia?", ("Yes", "No"))
+hpv_vaccination = st.radio("Have you received the HPV vaccination?", ("Yes", "No"))
+abnormal_bleeding = st.radio("Are you currently experiencing abnormal vaginal bleeding?", ("Yes", "No"))
+pelvic_pain = st.radio("Are you currently experiencing pelvic pain?", ("Yes", "No"))
+unusual_discharge = st.radio("Are you currently experiencing unusual discharge?", ("Yes", "No"))
+
+# Submit button
+submit = st.button("Submit")
+
+# Logic for processing user input
+if submit:
+    # Perform risk assessment and provide recommendations based on the user's input
+    risk_score = 0
+    
+    # Age-based risk assessment
+    if age >= 18 and age <= 25:
+        risk_score += 1
+    elif age >= 26 and age <= 30:
+        risk_score += 2
+    elif age >= 31 and age <= 40:
+        risk_score += 3
+    elif age >= 41 and age <= 50:
+        risk_score += 4
+    elif age > 50:
+        risk_score += 5
+    
+    # Other risk factors assessment
+    if hpv_positive == "Yes":
+        risk_score += 2
+    
+    if smoking_history == "Yes":
+        risk_score += 1
+    
+    if immune_conditions == "Yes":
+        risk_score += 2
+    
+    if family_history == "Yes":
+        risk_score += 1
+    
+    if abnormal_pap == "Yes":
+        risk_score += 2
+    
+    if sexual_behavior == "Yes":
+        risk_score += 2
+    
+    if cin_diagnosis == "Yes":
+        risk_score += 2
+    
+    if hpv_vaccination == "Yes":
+        risk_score -= 1
+    
+    if abnormal_bleeding == "Yes":
+        risk_score += 1
+    
+    if pelvic_pain == "Yes":
+        risk_score += 1
+    
+    if unusual_discharge == "Yes":
+        risk_score += 1
+    
+    # Example: Display the risk assessment result and recommendations
+    st.subheader("Risk Assessment Result")
+    if risk_score <= 5:
+        st.write("Based on your answers, your risk for cervical cancer is low.")
+    elif risk_score <= 10:
+        st.write("Based on your answers, your risk for cervical cancer is moderate.")
     else:
-        return "Low"
-
-# Function to calculate risk percentage
-def calculate_risk_percentage(risk_level):
-    if risk_level == "High":
-        return 80
-    elif risk_level == "Moderate":
-        return 50
+        st.write("Based on your answers, your risk for cervical cancer is high.")
+    
+    st.subheader("Recommendations")
+    if risk_score <= 5:
+        st.write("Here are some general recommendations for maintaining a healthy lifestyle and preventing cervical cancer:")
+        st.write("- Schedule regular Pap tests and follow your healthcare provider's recommendations.")
+        st.write("- Practice safe sex and use barrier methods of contraception.")
+        st.write("- Quit smoking if you are a smoker.")
+    elif risk_score <= 10:
+        st.write("Based on your moderate risk for cervical cancer, it is recommended to:")
+        st.write("- Schedule regular Pap tests and follow your healthcare provider's recommendations.")
+        st.write("- Consider discussing HPV vaccination with your healthcare provider.")
+        st.write("- Practice safe sex and use barrier methods of contraception.")
+        st.write("- Quit smoking if you are a smoker.")
     else:
-        return 20
-
-# Streamlit app
-def main():
-    st.title("GynoCare - Cervical Cancer Expert System")
-    
-    # User input
-    st.header("Patient Information")
-    age = st.slider("Age:", min_value=18, max_value=100)
-    symptoms = st.multiselect("Select symptoms:", ["Positive HPV test", "Abnormal Pap test", "Abnormal vaginal bleeding", "Pelvic pain", "Discomfort during sex"])
-    history = {
-        "Family history of cervical cancer": st.radio("Family history of cervical cancer:", ("Yes", "No")),
-        "Previous abnormal Pap test": st.radio("Previous abnormal Pap test:", ("Yes", "No")),
-        "HPV infection duration (months)": st.number_input("HPV infection duration:", min_value=0),
-        "Diagnosis": st.radio("Diagnosis:", ("Cervical cancer", "No diagnosis")),
-        "Weakened immune system": st.radio("Weakened immune system:", ("Yes", "No")),
-        "History of CIN": st.radio("History of CIN:", ("Yes", "No")),
-        "Hysterectomy": st.radio("Hysterectomy:", ("Yes", "No"))
-    }
-    lifestyle = {
-        "Smoking status": st.radio("Smoking status:", ("Smoker", "Non-smoker")),
-        "Sexually active": st.radio("Sexually active:", ("Yes", "No")),
-        "Multiple sexual partners": st.radio("Multiple sexual partners:", ("Yes", "No")),
-        "High-risk sexual behaviors": st.radio("High-risk sexual behaviors:", ("Yes", "No"))
-    }
-    
-    # Diagnose button
-    if st.button("Diagnose"):
-        # Evaluate rules and get recommendations
-        recommendations = evaluate_rules(symptoms, history, age, lifestyle)
-        
-        # Determine risk level
-        risk_level = get_risk_level(recommendations)
-        
-        # Calculate risk percentage
-        risk_percentage = calculate_risk_percentage(risk_level)
-        
-        # Display risk level and percentage
-        st.header("Cervical Cancer Diagnosis Result")
-        if risk_level == "High":
-            st.markdown("<span style='color:red;'>High Risk</span>", unsafe_allow_html=True)
-        elif risk_level == "Moderate":
-            st.markdown("<span style='color:orange;'>Moderate Risk</span>", unsafe_allow_html=True)
-        else:
-            st.markdown("<span style='color:green;'>Low Risk</span>", unsafe_allow_html=True)
-        st.write(f"Risk Percentage: {risk_percentage}%")
-        
-        # Display recommendations with risk level colors
-        st.header("Recommendations")
-        if recommendations:
-            for idx, recommendation in enumerate(recommendations):
-                if risk_level == "High":
-                    st.markdown(f"<span style='color:red;'>{idx+1}. {recommendation}</span>", unsafe_allow_html=True)
-                elif risk_level == "Moderate":
-                    st.markdown(f"<span style='color:orange;'>{idx+1}. {recommendation}</span>", unsafe_allow_html=True)
-                else:
-                    st.markdown(f"<span style='color:green;'>{idx+1}. {recommendation}</span>", unsafe_allow_html=True)
-        else:
-            st.write("No recommendations at this time.")
-    
-    
-if __name__ == "__main__":
-    main()
+        st.write("Based on your high risk for cervical cancer, it is strongly recommended to:")
+        st.write("- Schedule regular Pap tests and follow your healthcare provider's recommendations.")
+        st.write("- Discuss HPV vaccination with your healthcare provider if you haven't received it.")
+        st.write("- Practice safe sex and use barrier methods of contraception.")
+        st.write("- Quit smoking if you are a smoker.")
+        st.write("- Consult with a healthcare professional for further evaluation and management options.")
