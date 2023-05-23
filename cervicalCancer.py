@@ -103,4 +103,5 @@ if submit:
         st.write("- Quit smoking if you are a smoker.")
         st.write("- Consult with a healthcare professional for further evaluation and management options.")
     
-    # Additional logic and output based on the risk assessment can be added here
+if __name__ == '__main__':
+    app()
