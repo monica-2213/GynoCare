@@ -43,38 +43,28 @@ if submit:
     # Other risk factors assessment
     if hpv_positive == "Yes":
         risk_score += 2
-    
     if smoking_history == "Yes":
         risk_score += 1
-    
     if immune_conditions == "Yes":
         risk_score += 2
-    
     if family_history == "Yes":
         risk_score += 1
-    
     if abnormal_pap == "Yes":
         risk_score += 2
-    
     if sexual_behavior == "Yes":
         risk_score += 2
-    
     if cin_diagnosis == "Yes":
         risk_score += 2
-    
     if hpv_vaccination == "Yes":
         risk_score -= 1
-    
     if abnormal_bleeding == "Yes":
         risk_score += 1
-    
     if pelvic_pain == "Yes":
         risk_score += 1
-    
     if unusual_discharge == "Yes":
         risk_score += 1
     
-    # Example: Display the risk assessment result and recommendations
+    # Display the risk assessment result and recommendations
     st.subheader("Risk Assessment Result")
     if risk_score <= 5:
         st.write("Based on your answers, your risk for cervical cancer is low.")
@@ -102,6 +92,3 @@ if submit:
         st.write("- Practice safe sex and use barrier methods of contraception.")
         st.write("- Quit smoking if you are a smoker.")
         st.write("- Consult with a healthcare professional for further evaluation and management options.")
-    
-if __name__ == '__main__':
-    app()
